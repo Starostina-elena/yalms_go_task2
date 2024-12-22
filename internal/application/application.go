@@ -58,7 +58,8 @@ func RPNHandler(w http.ResponseWriter, r *http.Request) {
 	result := Response{}
 	result_calc, err := rpn.Calc(request.Expression)
 	if err != nil {
-		result.Error = err.Error()
+		w.WriteHeader(422)
+		result.Error = "Expression is not valid"
 	} else {
 		result.Result = fmt.Sprintf("%f", result_calc)
 	}
@@ -66,7 +67,23 @@ func RPNHandler(w http.ResponseWriter, r *http.Request) {
     fmt.Fprintf(w, string(jsonBytes))
 }
 
+func Answer500(next http.HandlerFunc) http.HandlerFunc {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        defer func() {
+            if err := recover(); err != nil {
+				result := Response{}
+                result.Error = "Internal server error"
+                jsonBytes, _ := json.Marshal(result)
+				w.WriteHeader(500)
+                fmt.Fprintf(w, string(jsonBytes))
+            }
+        }()
+        next.ServeHTTP(w, r)
+    })
+}
+
+
 func (a *Application) RunServer() error {
-	http.HandleFunc("/", RPNHandler)
+	http.HandleFunc("/", Answer500(RPNHandler))
 	return http.ListenAndServe(":"+a.config.Addr, nil)
 }
