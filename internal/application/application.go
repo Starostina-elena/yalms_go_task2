@@ -84,6 +84,6 @@ func Answer500(next http.HandlerFunc) http.HandlerFunc {
 
 
 func (a *Application) RunServer() error {
-	http.HandleFunc("/", Answer500(RPNHandler))
+	http.HandleFunc("/api/v1/calculate", Answer500(RPNHandler))
 	return http.ListenAndServe(":"+a.config.Addr, nil)
 }
