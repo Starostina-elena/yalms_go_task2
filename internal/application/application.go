@@ -82,8 +82,18 @@ func Answer500(next http.HandlerFunc) http.HandlerFunc {
     })
 }
 
+func CheckMethodIsPost(next http.HandlerFunc) http.HandlerFunc {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        if r.Method != "POST" {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+        next.ServeHTTP(w, r)
+    })
+}
+
 
 func (a *Application) RunServer() error {
-	http.HandleFunc("/api/v1/calculate", Answer500(RPNHandler))
+	http.HandleFunc("/api/v1/calculate", CheckMethodIsPost(Answer500(RPNHandler)))
 	return http.ListenAndServe(":"+a.config.Addr, nil)
 }
