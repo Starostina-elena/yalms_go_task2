@@ -18,3 +18,11 @@ go run cmd/main.go
 `http://localhost:8080/api/v1/calculate`
 
 # Примеры использования 
+```
+curl --location "http://localhost:8080/api/v1/calculate" --header "Content-Type: application/json" --data "{\"expression\": \"2+2\"}"
+{"result":"4.000000"}
+```
+```
+curl --location "http://localhost:8080/api/v1/calculate" --header "Content-Type: application/json" --data "{\"expression\": \"2+\"}"
+{"error":"Expression is not valid"}
+```
