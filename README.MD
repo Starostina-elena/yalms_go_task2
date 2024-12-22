@@ -32,3 +32,13 @@ curl --location "http://localhost:8080/api/v1/calculate" --header "Content-Type:
 curl --location "http://localhost:8080/api/v1/calculate" --header "Content-Type: application/json" --data "{\"expression\": \"2+\"}"
 {"error":"Expression is not valid"}
 ```
+
+# Запуск тестов
+
+Выполните команды:</br>
+```
+cd internal/application
+```
+```
+go test
+```
