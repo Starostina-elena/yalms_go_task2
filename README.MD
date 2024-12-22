@@ -7,12 +7,10 @@
 # Запуск
 (Требования: go, git)
 Выполните команды:
-```
-git clone git@github.com:Starostina-elena/yalms_go_task2.git
-cd yalms_go_task2
-go mod init github.com/Starostina-elena/yalms_go_task2
-go run cmd/main.go
-```
+`git clone git@github.com:Starostina-elena/yalms_go_task2.git`
+`cd yalms_go_task2`
+`go mod init github.com/Starostina-elena/yalms_go_task2`
+`go run cmd/main.go`
 
 Запущенный сервер будет доступен по адресу 
 `http://localhost:8080/api/v1/calculate`
