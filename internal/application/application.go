@@ -1,15 +1,11 @@
 package application
 
 import (
-	//"bufio"
 	"encoding/json"
-	//"errors"
 	"fmt"
-	//"log"
 	"net/http"
 	"os"
-	//"strings"
-
+	"log"
 	"github.com/Starostina-elena/yalms_go_task2/pkg/rpn"
 )
 
@@ -52,6 +48,7 @@ func RPNHandler(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		log.Printf("[ERROR] Error while decoding json: %s", err)
 		return
 	}
 
@@ -60,17 +57,20 @@ func RPNHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(422)
 		result.Error = "Expression is not valid"
+		log.Printf("Rejected %s: wrong expression", request.Expression)
 	} else {
 		result.Result = fmt.Sprintf("%f", result_calc)
 	}
 	jsonBytes, _ := json.Marshal(result)
     fmt.Fprintf(w, string(jsonBytes))
+	log.Printf("Finished with request")
 }
 
 func Answer500(next http.HandlerFunc) http.HandlerFunc {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         defer func() {
             if err := recover(); err != nil {
+				log.Printf("[ERROR] Internal server error: %s on request", err)
 				result := Response{}
                 result.Error = "Internal server error"
                 jsonBytes, _ := json.Marshal(result)
@@ -84,7 +84,9 @@ func Answer500(next http.HandlerFunc) http.HandlerFunc {
 
 func CheckMethodIsPost(next http.HandlerFunc) http.HandlerFunc {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println("Got new request")
         if r.Method != "POST" {
+			log.Println("Rejected request: wrong method")
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
 		}
